@@ -1,0 +1,5 @@
+/* App CSS replaced - using Tailwind CSS utilities in `src/index.css`.
+   Component-level CSS files were simplified so Tailwind rules are authoritative.
+   Keep this file minimal to avoid duplicate styling. */
+
+/* If you need a small override, add Tailwind-friendly utilities here. */

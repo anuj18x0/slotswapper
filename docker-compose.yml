@@ -1,0 +1,69 @@
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: slotswapper-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: project
+      MYSQL_DATABASE: slotswapper
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./backend/database/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
+      - ./backend/database/sample_data.sql:/docker-entrypoint-initdb.d/2-sample_data.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - slotswapper-network
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: slotswapper-backend
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: project
+      DB_NAME: slotswapper
+      JWT_SECRET: c3f69be2894e55f56236aac905b9939a20ad78c4a61f7e228f21b698fd470f8a82b7a17c25b3c505996bfb80e99c2aae3a3a1f5d3761a50becbb0821c812eced
+      JWT_EXPIRES_IN: 7d
+      CORS_ORIGIN: http://localhost:3000
+    ports:
+      - "3001:3001"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - slotswapper-network
+    restart: unless-stopped
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: slotswapper-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - slotswapper-network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  slotswapper-network:
+    driver: bridge
