@@ -1,9 +1,11 @@
 # SlotSwapper
 
 <img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/42d0c2ed-2b09-4d23-93ef-ce0e275fa690" />
+---
 <img width="1919" height="1077" alt="Screenshot 2025-10-31 153913" src="https://github.com/user-attachments/assets/7dd6305e-51c9-434a-9b98-4d606971b419" />
+---
 <img width="1919" height="1079" alt="Screenshot 2025-10-31 153454" src="https://github.com/user-attachments/assets/cd49ab14-2482-4a75-b6aa-3858cfaf0349" />
-
+---
 
 
 
