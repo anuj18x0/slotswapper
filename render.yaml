@@ -1,0 +1,52 @@
+services:
+  # MySQL Database (Using PostgreSQL on Render, or connect external MySQL)
+  - type: pserv
+    name: slotswapper-db
+    env: docker
+    dockerfilePath: ./backend/Dockerfile
+    plan: free
+    
+  # Backend API
+  - type: web
+    name: slotswapper-backend
+    env: docker
+    dockerfilePath: ./backend/Dockerfile
+    plan: free
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: 3306
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        value: slotswapper
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: CORS_ORIGIN
+        fromService:
+          type: web
+          name: slotswapper-frontend
+          property: url
+
+  # Frontend
+  - type: web
+    name: slotswapper-frontend
+    env: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: ./frontend/dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        fromService:
+          type: web
+          name: slotswapper-backend
+          envVarKey: RENDER_EXTERNAL_URL
+        value: /api
